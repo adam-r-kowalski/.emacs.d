@@ -7,9 +7,11 @@
 (set-face-attribute 'default nil :height 160)
 
 (menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
 (tooltip-mode -1)
+
+(when (display-graphic-p)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1))
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
