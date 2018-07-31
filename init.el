@@ -179,8 +179,8 @@
   (add-hook 'prog-mode-hook #'smartparens-mode)
   (add-hook 'smartparens-mode-hook
 	    #'(lambda ()
-		(sp-pair "'" nil :actions :rem)
-		(sp-pair "`" nil :actions :rem)))
+		(sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
+		(sp-local-pair 'emacs-lisp-mode "`" nil :actions nil)))
   :diminish smartparens-mode)
 
 (use-package evil-smartparens
@@ -211,6 +211,17 @@
   (when (eq major-mode 'python-mode)
     (elpy-yapf-fix-code)))
 
+
+(defun flymake-mypy-init ()
+  "Init mypy."
+  (let* ((temp-file (flymake-init-create-temp-buffer-copy
+                     'flymake-create-temp-inplace))
+         (local-file (file-relative-name
+                      temp-file
+                      (file-name-directory buffer-file-name))))
+    (list "mypy" (list local-file "-s"))))
+
+
 (use-package elpy
   :defer t
   :init
@@ -220,7 +231,9 @@
 	python-shell-prompt-detect-failure-warning nil)
   (add-to-list 'python-shell-completion-native-disabled-interpreters
 	       "jupyter")
-  (add-hook 'before-save-hook #'python-save-hook))
+  (add-hook 'before-save-hook #'python-save-hook)
+  (add-to-list 'flymake-allowed-file-name-masks
+	       '("\\.py\\'" flymake-mypy-init)))
 
 
 (general-define-key
@@ -272,7 +285,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (elpy evil-magit evil-smartparens aggressive-indent adjust-parens evil-cleverparens rainbow-delimiters company general which-key counsel-projectile counsel ivy zerodark-theme exec-path-from-shell linum-relative diminish evil use-package))))
+    (flycheck-mypy flymake-mypy elpy evil-magit evil-smartparens aggressive-indent adjust-parens evil-cleverparens rainbow-delimiters company general which-key counsel-projectile counsel ivy zerodark-theme exec-path-from-shell linum-relative diminish evil use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
