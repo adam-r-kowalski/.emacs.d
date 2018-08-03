@@ -81,7 +81,7 @@
 
 
 (use-package flymake
-  :hook python-mode)
+  :hook (python-mode . flymake-mode))
 
 
 (use-package rainbow-delimiters
@@ -116,8 +116,20 @@
 	 ("<backtab>" . lisp-dedent-adjust-parens)))
 
 
+(defun flymake-mypy-init ()
+  "Init mypy."
+  (let* ((temp-file (flymake-init-create-temp-buffer-copy
+                     'flymake-create-temp-inplace))
+         (local-file (file-relative-name
+                      temp-file
+                      (file-name-directory buffer-file-name))))
+    (list "mypy" (list local-file "-s"))))
+
+
 (use-package elpy
-  :hook python-mode
+  :hook
+  (python-mode . elpy-mode)
+  (before-save . elpy-yapf-fix-code)
 
   :config
   (elpy-enable)
