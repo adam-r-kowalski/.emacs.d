@@ -110,19 +110,75 @@
   :hook (emacs-lisp-mode . aggressive-indent-mode))
 
 
+(use-package general)
+
+
+(general-define-key
+ :states 'normal
+ :keymaps '(global dired-mode-map)
+ :prefix "SPC"
+ "f" 'find-file
+ "x" 'execute-extended-command
+ "w" '(nil :which-key "window")
+ "b" '(nil :which-key "buffer")
+ "s" 'shell)
+
+
+(general-define-key
+ :states 'normal
+ :keymaps '(global dired-mode-map)
+ :prefix "SPC w"
+ "/" 'split-window-horizontally
+ "-" 'split-window-vertically
+ "m" 'delete-other-windows
+ "c" 'evil-window-delete
+ "h" 'evil-window-left
+ "j" 'evil-window-down
+ "k" 'evil-window-up
+ "l" 'evil-window-right)
+
+
+(defun kill-other-buffers ()
+  "Kill all other buffers."
+  (interactive)
+  (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
+
+
+(general-define-key
+ :states 'normal
+ :keymaps '(global dired-mode-map)
+ :prefix "SPC b"
+ "s" 'switch-to-buffer
+ "l" 'list-buffers
+ "o" 'kill-other-buffers
+ "k" 'kill-buffer-and-window)
+
+
+(general-define-key
+ :keymaps 'emacs-lisp-mode-map
+ :states 'normal
+ :prefix ","
+ "e" 'eval-defun)
+
+
 (use-package adjust-parens
-  :hook (emacs-lisp-mode . adjust-parens-mode)
-  :bind (("TAB" . lisp-indent-adjust-parens)
-	 ("<backtab>" . lisp-dedent-adjust-parens)))
+  :hook (emacs-lisp-mode . adjust-parens-mode))
+
+
+(general-define-key
+ :states 'insert
+ :keymaps 'emacs-lisp-mode-map
+ "TAB" 'lisp-indent-adjust-parens
+ "<backtab>" 'lisp-dedent-adjust-parens)
 
 
 (defun flymake-mypy-init ()
   "Init mypy."
   (let* ((temp-file (flymake-init-create-temp-buffer-copy
-                     'flymake-create-temp-inplace))
-         (local-file (file-relative-name
-                      temp-file
-                      (file-name-directory buffer-file-name))))
+		     'flymake-create-temp-inplace))
+	 (local-file (file-relative-name
+		      temp-file
+		      (file-name-directory buffer-file-name))))
     (list "mypy" (list local-file "-s"))))
 
 
@@ -141,7 +197,54 @@
   :custom
   (python-shell-interpreter "jupyter")
   (python-shell-interpreter-args "console --simple-prompt")
-  (python-shell-prompt-detect-failure-warning nil))
+  (python-shell-prompt-detect-failure-warning nil)
+
+  :bind (:map evil-normal-state-map
+	      (", e" . elpy-shell-send-group)
+	      (", E" . elpy-shell-send-group-and-step)))
+
+
+(general-define-key
+ :states '(normal visual)
+ :keymaps 'python-mode-map
+ :prefix ","
+ "a" 'elpy-goto-assignment
+ "A" 'elpy-goto-assignment-other-window
+ "d" 'elpy-goto-definition
+ "D" 'elpy-goto-definition-other-window
+ "s" 'elpy-shell-switch-to-shell
+ "S" 'elpy-shell-switch-to-shell-in-current-window
+ "k" 'elpy-shell-kill
+ "K" 'elpy-shell-kill-all
+ "e" 'elpy-shell-send-statement
+ "E" 'elpy-shell-send-statement-and-step
+ "g" 'elpy-shell-send-group
+ "G" 'elpy-shell-send-group-and-step
+ "v" 'elpy-shell-send-region-or-buffer
+ "V" 'elpy-shell-send-region-or-buffer-and-step
+ "t" 'elpy-shell-send-top-statement
+ "T" 'elpy-shell-send-top-statement-and-step
+ "f" 'elpy-shell-send-defun
+ "F" 'elpy-shell-send-defun-and-step
+ "b" 'elpy-shell-send-buffer
+ "B" 'elpy-shell-send-buffer-and-step
+ "c" 'elpy-shell-send-defclass
+ "C" 'elpy-shell-send-defclass-and-step
+ "n" 'elpy-flymake-next-error
+ "N" 'elpy-flymake-previous-error
+ "h" 'elpy-doc
+ "u" 'elpy-test
+ "r" '(nil :which-key "refactor")
+ "p" 'elpy-profile-buffer-or-region)
+
+
+(general-define-key
+ :states '(normal visual)
+ :keymaps 'python-mode-map
+ :prefix ",r"
+ "s" 'elpy-multiedit-python-symbol-at-point
+ "f" 'elpy-format-code
+ "r" 'elpy-refactor)
 
 
 (custom-set-variables
