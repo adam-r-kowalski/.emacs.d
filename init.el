@@ -76,6 +76,17 @@
   :config (which-key-mode))
 
 
+(use-package ivy
+  :defer 1
+
+  :config
+  (ivy-mode 1)
+
+  :custom
+  (ivy-use-virtual-buffers t)
+  (enable-recursive-minibuffers t))
+
+
 (use-package flycheck
   :hook (prog-mode . flycheck-mode))
 
@@ -245,6 +256,20 @@
  "s" 'elpy-multiedit-python-symbol-at-point
  "f" 'elpy-format-code
  "r" 'elpy-refactor)
+
+
+(use-package rust-mode
+  :mode "\\.rs\\'"
+  :custom (rust-format-on-save t))
+
+
+(use-package flycheck-rust
+  :hook (rust-mode . flycheck-rust-mode)
+  :config (flycheck-rust-setup))
+
+(use-package toml-mode :mode "\\.toml\\'")
+
+(use-package racer :hook (rust-mode . racer-mode))
 
 
 (custom-set-variables
