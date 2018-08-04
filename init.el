@@ -56,7 +56,7 @@
 (setq ring-bell-function 'ignore)
 
 
-(use-package atom-one-dark-theme)
+(use-package zerodark-theme)
 
 
 (use-package linum-relative
@@ -279,7 +279,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (elpy adjust-parens aggressive-indent evil-cleverparens evil-smartparens smartparens rainbow-delimiters flycheck which-key company linum-relative atom-one-dark-theme evil use-package))))
+    (zerodark-theme elpy adjust-parens aggressive-indent evil-cleverparens evil-smartparens smartparens rainbow-delimiters flycheck which-key company linum-relative atom-one-dark-theme evil use-package))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
