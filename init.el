@@ -268,14 +268,6 @@
 (use-package racer :hook (rust-mode . racer-mode))
 
 
-
-
-
-
-(provide 'init)
-;;; init.el ends here
-
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -284,9 +276,13 @@
  '(package-selected-packages
    (quote
     (racer toml-mode flycheck-rust rust-mode elpy adjust-parens general aggressive-indent evil-cleverparens evil-smartparens smartparens rainbow-delimiters flycheck ivy which-key company linum-relative panda-theme evil use-package))))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+(provide 'init)
+;;; init.el ends here
