@@ -208,11 +208,7 @@
   :custom
   (python-shell-interpreter "jupyter")
   (python-shell-interpreter-args "console --simple-prompt")
-  (python-shell-prompt-detect-failure-warning nil)
-
-  :bind (:map evil-normal-state-map
-	      (", e" . elpy-shell-send-group)
-	      (", E" . elpy-shell-send-group-and-step)))
+  (python-shell-prompt-detect-failure-warning nil))
 
 
 (general-define-key
