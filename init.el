@@ -35,11 +35,12 @@
 			      (time-subtract after-init-time before-init-time)))
 		     gcs-done)))
 
-
 (menu-bar-mode -1)
 (when (display-graphic-p)
   (tool-bar-mode -1)
-  (scroll-bar-mode -1))
+  (scroll-bar-mode -1)
+  (use-package exec-path-from-shell
+    :config (exec-path-from-shell-initialize)))
 
 
 (setq inhibit-splash-screen t)
@@ -55,9 +56,8 @@
 
 (setq ring-bell-function 'ignore)
 
-
-(use-package panda-theme)
-
+(set-face-attribute 'default nil :height 180)
+(use-package atom-one-dark-theme)
 
 (use-package linum-relative
   :config (linum-relative-global-mode)
@@ -77,8 +77,6 @@
 
 
 (use-package ivy
-  :defer 1
-
   :config
   (ivy-mode 1)
 
@@ -124,6 +122,13 @@
 (use-package general)
 
 
+(use-package magit
+  :defer 1)
+
+(use-package evil-magit
+  :defer 1)
+
+
 (general-define-key
  :states 'normal
  :keymaps '(global dired-mode-map)
@@ -132,7 +137,8 @@
  "x" 'execute-extended-command
  "w" '(nil :which-key "window")
  "b" '(nil :which-key "buffer")
- "s" 'shell)
+ "s" 'shell
+ "g" 'magit)
 
 
 (general-define-key
@@ -156,7 +162,7 @@
 
 
 (general-define-key
- :states 'normal
+ :states '(normal visual)
  :keymaps '(global dired-mode-map)
  :prefix "SPC b"
  "s" 'switch-to-buffer
@@ -167,7 +173,7 @@
 
 (general-define-key
  :keymaps 'emacs-lisp-mode-map
- :states 'normal
+ :states '(normal visual)
  :prefix ","
  "e" 'eval-defun)
 
@@ -183,89 +189,22 @@
  "<backtab>" 'lisp-dedent-adjust-parens)
 
 
-(defun flymake-mypy-init ()
-  "Init mypy."
-  (let* ((temp-file (flymake-init-create-temp-buffer-copy
-		     'flymake-create-temp-inplace))
-	 (local-file (file-relative-name
-		      temp-file
-		      (file-name-directory buffer-file-name))))
-    (list "mypy" (list local-file "-s"))))
-
-
-(use-package elpy
+(use-package nim-mode
+  :mode "\\.nim\\'"
   :hook
-  (python-mode . elpy-mode)
-  (before-save . elpy-yapf-fix-code)
-
-  :config
-  (elpy-enable)
-  (add-to-list 'python-shell-completion-native-disabled-interpreters
-	       "jupyter")
-  (add-to-list 'flymake-allowed-file-name-masks
-	       '("\\.py\\'" flymake-mypy-init))
-
-  :custom
-  (python-shell-interpreter "jupyter")
-  (python-shell-interpreter-args "console --simple-prompt")
-  (python-shell-prompt-detect-failure-warning nil))
+  (nim-mode . nimsuggest-mode)
+  (nimsuggest-mode . company-mode)
+  (nimsuggest-mode . flycheck-mode))
 
 
 (general-define-key
+ :keymaps 'nim-mode-map
  :states '(normal visual)
- :keymaps 'python-mode-map
  :prefix ","
- "a" 'elpy-goto-assignment
- "A" 'elpy-goto-assignment-other-window
- "d" 'elpy-goto-definition
- "D" 'elpy-goto-definition-other-window
- "s" 'elpy-shell-switch-to-shell
- "S" 'elpy-shell-switch-to-shell-in-current-window
- "k" 'elpy-shell-kill
- "K" 'elpy-shell-kill-all
- "e" 'elpy-shell-send-statement
- "E" 'elpy-shell-send-statement-and-step
- "g" 'elpy-shell-send-group
- "G" 'elpy-shell-send-group-and-step
- "v" 'elpy-shell-send-region-or-buffer
- "V" 'elpy-shell-send-region-or-buffer-and-step
- "t" 'elpy-shell-send-top-statement
- "T" 'elpy-shell-send-top-statement-and-step
- "f" 'elpy-shell-send-defun
- "F" 'elpy-shell-send-defun-and-step
- "b" 'elpy-shell-send-buffer
- "B" 'elpy-shell-send-buffer-and-step
- "c" 'elpy-shell-send-defclass
- "C" 'elpy-shell-send-defclass-and-step
- "n" 'elpy-flymake-next-error
- "N" 'elpy-flymake-previous-error
- "h" 'elpy-doc
- "u" 'elpy-test
- "r" '(nil :which-key "refactor")
- "p" 'elpy-profile-buffer-or-region)
+ "c" 'nim-compile
+ "d" 'nimsuggest-show-doc
+ "f" 'nimsuggest-find-definition)
 
-
-(general-define-key
- :states '(normal visual)
- :keymaps 'python-mode-map
- :prefix ",r"
- "s" 'elpy-multiedit-python-symbol-at-point
- "f" 'elpy-format-code
- "r" 'elpy-refactor)
-
-
-(use-package rust-mode
-  :mode "\\.rs\\'"
-  :custom (rust-format-on-save t))
-
-
-(use-package flycheck-rust
-  :hook (rust-mode . flycheck-rust-mode)
-  :config (flycheck-rust-setup))
-
-(use-package toml-mode :mode "\\.toml\\'")
-
-(use-package racer :hook (rust-mode . racer-mode))
 
 
 (custom-set-variables
@@ -275,8 +214,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (racer toml-mode flycheck-rust rust-mode elpy adjust-parens general aggressive-indent evil-cleverparens evil-smartparens smartparens rainbow-delimiters flycheck ivy which-key company linum-relative panda-theme evil use-package))))
-
+    (evil-magit magit exec-path-from-shell which-key use-package rainbow-delimiters panda-theme nim-mode linum-relative julia-repl julia-mode ivy general evil-smartparens evil-cleverparens company atom-one-dark-theme aggressive-indent adjust-parens))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
